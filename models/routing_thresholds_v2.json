@@ -1,0 +1,5 @@
+{
+  "approve_cutoff": 0.1829364772952719,
+  "reject_cutoff": 0.7815751607537678,
+  "model": "lightgbm_full_schema_tuned.joblib"
+}

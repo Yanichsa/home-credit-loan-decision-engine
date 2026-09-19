@@ -1,0 +1,13 @@
+# Data (large, and Home Credit's Kaggle competition data may not be redistributed publicly)
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Poetry (local-only settings, no secrets, but machine-specific)
+poetry.toml
+
+# macOS
+.DS_Store

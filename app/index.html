@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loan Decision Engine</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.44.0/tabler-icons.min.css">
+<style>
+  :root {
+    --surface-2: #ffffff;
+    --surface-1: #f4f3ef;
+    --surface-0: #ececE6;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --border: rgba(11,11,11,0.10);
+    --border-strong: rgba(11,11,11,0.20);
+    --bg-success: #eaf3de;
+    --text-success: #27500a;
+    --border-success: #97c459;
+    --bg-danger: #fcebeb;
+    --text-danger: #791f1f;
+    --border-danger: #f09595;
+    --bg-accent: #e6f1fb;
+    --text-accent: #0c447c;
+    --radius: 8px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-2: #232322;
+      --surface-1: #1a1a19;
+      --surface-0: #131312;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #898781;
+      --border: rgba(255,255,255,0.10);
+      --border-strong: rgba(255,255,255,0.20);
+      --bg-success: #173404;
+      --text-success: #97c459;
+      --border-success: #3b6d11;
+      --bg-danger: #4a1b0c;
+      --text-danger: #f09595;
+      --border-danger: #a32d2d;
+      --bg-accent: #042c53;
+      --text-accent: #85b7eb;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--surface-0);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 2rem 1.5rem;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 500; margin: 0 0 4px; }
+  .sub { font-size: 14px; color: var(--text-secondary); margin: 0 0 1.25rem; }
+  button { font-family: inherit; }
+  input {
+    font-family: inherit;
+    font-size: 14px;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-primary);
+    width: 140px;
+  }
+  .btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .btn:hover { background: var(--surface-1); }
+  .chip {
+    height: 28px;
+    padding: 0 10px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    background: var(--surface-1);
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .chip:hover { border-color: var(--border-strong); }
+  .spin {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Loan Decision Engine</h1>
+  <p class="sub">Automated loan risk assessment and decision routing. Submit a loan application to receive a risk score and determine the appropriate next step.</p>
+
+  <div style="background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
+    <h2 style="font-size: 15px; font-weight: 500; margin: 0 0 12px;">Decision Workflow</h2>
+    <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.7;">
+      <li>
+        <strong style="color: var(--text-primary);">Score Risk</strong> &mdash; The ML model evaluates the application and generates a risk score.
+      </li>
+      <li>
+        <strong style="color: var(--text-primary);">Route Application</strong> &mdash; Based on the risk score, the application is automatically routed:
+        <ul style="margin: 6px 0; padding-left: 18px;">
+          <li><span style="color: var(--text-success); font-weight: 500;">Low Risk &mdash; Approve</span>: an approval response is generated automatically.</li>
+          <li><span style="color: var(--text-secondary); font-weight: 500;">Medium Risk &mdash; Review</span>: the application is escalated to a human underwriter for review.</li>
+          <li><span style="color: var(--text-danger); font-weight: 500;">High Risk &mdash; Decline</span>: a decline response is generated automatically.</li>
+        </ul>
+      </li>
+      <li>
+        <strong style="color: var(--text-primary);">Generate Response</strong> &mdash; For automated decisions, an AI-generated customer response explains the outcome.
+      </li>
+      <li>
+        <strong style="color: var(--text-primary);">Validate Response</strong> &mdash; The generated response is checked for potentially biased or inappropriate language before delivery.
+      </li>
+      <li>
+        <strong style="color: var(--text-primary);">Send Response</strong> &mdash; Validated responses are ready to be sent to the customer.
+      </li>
+    </ol>
+  </div>
+
+  <div style="background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; font-size: 13px;">
+    <h2 style="font-size: 15px; font-weight: 500; margin: 0 0 10px;">Model Information</h2>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+      <tr><td style="color: var(--text-secondary); padding: 2px 0;">Model</td><td style="text-align: right;">LightGBM</td></tr>
+      <tr><td style="color: var(--text-secondary); padding: 2px 0;">Training Data</td><td style="text-align: right;">6 Home Credit relational tables</td></tr>
+      <tr><td style="color: var(--text-secondary); padding: 2px 0;">ROC-AUC</td><td style="text-align: right;">0.7798</td></tr>
+    </table>
+    <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Predictions are generated through the live ML pipeline. Results are not retrieved from pre-computed predictions.</p>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+    <input id="sk-id-input" type="number" placeholder="applicant ID" />
+    <button class="btn" id="run-btn" onclick="runApplicant()">Run</button>
+    <span id="status" style="font-size: 13px; color: var(--text-secondary);"></span>
+  </div>
+  <div id="quick-picks" style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;"></div>
+
+  <button class="btn" id="new-applicant-toggle" style="margin-bottom: 1.5rem;" onclick="toggleNewApplicantForm()">+ New applicant</button>
+  <div id="new-applicant-form" style="display: none; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
+    <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 12px;">Not in the dataset — a real new customer. Bureau, previous-loan, and payment-history fields aren't collected here because a new customer has none yet; the score leans on these application-level fields alone. See the caveat on the result.</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-bottom: 12px;">
+      <input id="na-name" placeholder="Customer name" style="width: 100%;" />
+      <input id="na-income" type="number" placeholder="Annual income ($)" style="width: 100%;" />
+      <input id="na-credit" type="number" placeholder="Requested credit ($)" style="width: 100%;" />
+      <input id="na-annuity" type="number" placeholder="Annuity ($)" style="width: 100%;" />
+      <input id="na-age" type="number" placeholder="Age (years)" style="width: 100%;" />
+      <input id="na-employed" type="number" placeholder="Years employed" style="width: 100%;" />
+      <input id="na-ext2" type="number" step="0.01" min="0" max="1" placeholder="EXT_SOURCE_2 (0-1, optional)" style="width: 100%;" />
+      <input id="na-ext3" type="number" step="0.01" min="0" max="1" placeholder="EXT_SOURCE_3 (0-1, optional)" style="width: 100%;" />
+      <select id="na-gender" style="width: 100%; height: 36px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--surface-2); color: var(--text-primary);">
+        <option value="F">Female</option><option value="M">Male</option>
+      </select>
+      <select id="na-education" style="width: 100%; height: 36px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--surface-2); color: var(--text-primary);">
+        <option>Secondary / secondary special</option><option>Higher education</option>
+        <option>Incomplete higher</option><option>Lower secondary</option><option>Academic degree</option>
+      </select>
+      <select id="na-income-type" style="width: 100%; height: 36px; border-radius: var(--radius); border: 0.5px solid var(--border); background: var(--surface-2); color: var(--text-primary);">
+        <option>Working</option><option>Commercial associate</option><option>State servant</option>
+        <option>Pensioner</option><option>Unemployed</option><option>Student</option>
+        <option>Businessman</option><option>Maternity leave</option>
+      </select>
+      <input id="na-occupation" placeholder="Occupation (e.g. Accountants)" style="width: 100%;" />
+      <input id="na-organization" placeholder="Employer type (e.g. Bank)" style="width: 100%;" />
+    </div>
+    <button class="btn" id="new-applicant-run-btn" onclick="runNewApplicant()">Score this applicant</button>
+
+    <div style="border-top: 0.5px solid var(--border); margin-top: 16px; padding-top: 12px;">
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 8px;">Or upload a CSV of new applicants — needs a <code>customer_name</code> column plus any of the fields above (same column names as the form; unlisted ones fall back to the training-set median, same as leaving a form field blank).</p>
+      <input type="file" id="na-csv-input" accept=".csv" style="font-size: 13px;" />
+      <button class="btn" id="new-applicant-batch-btn" onclick="runNewApplicantsBatch()" style="margin-left: 8px;">Upload &amp; score</button>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
+    <div id="queue" style="width: 200px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px;"></div>
+    <div id="detail" style="flex: 1; min-width: 280px;"></div>
+  </div>
+
+</div>
+
+<script>
+const history = [];
+let selectedId = null;
+
+const statusMeta = {
+  sent: { label: 'Sent', bg: 'var(--bg-success)', text: 'var(--text-success)' },
+  escalated_to_human: { label: 'Escalated to human', bg: 'var(--bg-danger)', text: 'var(--text-danger)' },
+  human_review_no_llm: { label: 'Routed to human, no AI', bg: 'var(--surface-1)', text: 'var(--text-secondary)' }
+};
+const decisionMeta = {
+  approved: { label: 'Approved', color: 'var(--text-success)' },
+  denied: { label: 'Denied', color: 'var(--text-danger)' },
+  human_review: { label: 'Human review', color: 'var(--text-secondary)' }
+};
+
+function setStatus(text, spinning) {
+  document.getElementById('status').innerHTML = spinning
+    ? `<i class="ti ti-loader-2 spin" aria-hidden="true"></i> ${text}`
+    : text;
+}
+
+async function loadQuickPicks() {
+  try {
+    const res = await fetch('/api/demo-ids');
+    const data = await res.json();
+    const el = document.getElementById('quick-picks');
+    el.innerHTML = '';
+    data.ids.forEach(id => {
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = `try ${id}`;
+      chip.onclick = () => { document.getElementById('sk-id-input').value = id; runApplicant(); };
+      el.appendChild(chip);
+    });
+  } catch (e) {
+  }
+}
+
+async function runApplicant() {
+  const input = document.getElementById('sk-id-input');
+  const skId = parseInt(input.value, 10);
+  if (!skId) { setStatus('enter an applicant ID first', false); return; }
+
+  document.getElementById('run-btn').disabled = true;
+  setStatus('scoring, then drafting + bias-checking if approved/denied. This can take up to 30s for the LLM calls', true);
+
+  try {
+    const res = await fetch(`/api/applicant/${skId}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      setStatus(err.detail || `request failed (${res.status})`, false);
+      return;
+    }
+    const data = await res.json();
+    history.unshift(data);
+    selectedId = data.SK_ID_CURR;
+    renderQueue();
+    renderDetail();
+    setStatus('done', false);
+  } catch (e) {
+    setStatus('could not reach the backend — is `uvicorn src.api:app` running?', false);
+  } finally {
+    document.getElementById('run-btn').disabled = false;
+  }
+}
+
+function toggleNewApplicantForm() {
+  const form = document.getElementById('new-applicant-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+async function runNewApplicant() {
+  const name = document.getElementById('na-name').value.trim();
+  if (!name) { setStatus('enter a customer name first', false); return; }
+
+  const ageYears = parseFloat(document.getElementById('na-age').value);
+  const employedYears = parseFloat(document.getElementById('na-employed').value);
+  const ext2 = document.getElementById('na-ext2').value;
+  const ext3 = document.getElementById('na-ext3').value;
+
+  const fields = {
+    AMT_INCOME_TOTAL: parseFloat(document.getElementById('na-income').value) || null,
+    AMT_CREDIT: parseFloat(document.getElementById('na-credit').value) || null,
+    AMT_ANNUITY: parseFloat(document.getElementById('na-annuity').value) || null,
+    DAYS_BIRTH: ageYears ? Math.round(-ageYears * 365) : null,
+    DAYS_EMPLOYED: employedYears ? Math.round(-employedYears * 365) : null,
+    CODE_GENDER: document.getElementById('na-gender').value,
+    NAME_EDUCATION_TYPE: document.getElementById('na-education').value,
+    NAME_INCOME_TYPE: document.getElementById('na-income-type').value,
+    OCCUPATION_TYPE: document.getElementById('na-occupation').value || null,
+    ORGANIZATION_TYPE: document.getElementById('na-organization').value || null,
+    EXT_SOURCE_2: ext2 ? parseFloat(ext2) : null,
+    EXT_SOURCE_3: ext3 ? parseFloat(ext3) : null,
+  };
+
+  document.getElementById('new-applicant-run-btn').disabled = true;
+  setStatus('scoring, then drafting + bias-checking if approved/denied — can take up to 30s for the LLM calls', true);
+
+  try {
+    const res = await fetch('/api/new-applicant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customer_name: name, fields }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      setStatus(err.detail || `request failed (${res.status})`, false);
+      return;
+    }
+    const data = await res.json();
+    history.unshift(data);
+    selectedId = data.SK_ID_CURR;
+    renderQueue();
+    renderDetail();
+    setStatus('done', false);
+    toggleNewApplicantForm();
+  } catch (e) {
+    setStatus('could not reach the backend — is `uvicorn src.api:app` running?', false);
+  } finally {
+    document.getElementById('new-applicant-run-btn').disabled = false;
+  }
+}
+
+async function runNewApplicantsBatch() {
+  const fileInput = document.getElementById('na-csv-input');
+  const file = fileInput.files[0];
+  if (!file) { setStatus('choose a CSV file first', false); return; }
+
+  const csvText = await file.text();
+
+  document.getElementById('new-applicant-batch-btn').disabled = true;
+  setStatus('scoring each row, then drafting + bias-checking approvals/denials — can take a while for a full CSV', true);
+
+  try {
+    const res = await fetch('/api/new-applicants-batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ csv_text: csvText }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      setStatus(err.detail || `request failed (${res.status})`, false);
+      return;
+    }
+    const data = await res.json();
+    data.results.forEach(r => history.unshift(r));
+    if (data.results.length) selectedId = data.results[0].SK_ID_CURR;
+    renderQueue();
+    renderDetail();
+    setStatus(`done — scored ${data.results.length} applicant(s)`, false);
+    fileInput.value = '';
+  } catch (e) {
+    setStatus('could not reach the backend — is `uvicorn src.api:app` running?', false);
+  } finally {
+    document.getElementById('new-applicant-batch-btn').disabled = false;
+  }
+}
+
+function fmt(n) { return '$' + Number(n).toLocaleString(); }
+
+function renderQueue() {
+  const queue = document.getElementById('queue');
+  queue.innerHTML = '';
+  if (history.length === 0) {
+    queue.innerHTML = `<p style="font-size: 13px; color: var(--text-muted);">Run an applicant to see results here.</p>`;
+    return;
+  }
+  history.forEach(c => {
+    const isActive = c.SK_ID_CURR === selectedId;
+    const row = document.createElement('button');
+    row.setAttribute('aria-pressed', isActive);
+    row.style.cssText = `text-align:left; border-radius: var(--radius); border: 0.5px solid ${isActive ? 'var(--border-strong)' : 'var(--border)'}; background: ${isActive ? 'var(--surface-1)' : 'transparent'}; padding: 10px 12px; cursor: pointer; color: var(--text-primary);`;
+    row.innerHTML = `
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 2px;">${c.customer_name || 'Applicant ' + c.SK_ID_CURR}</div>
+      <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Applicant ${c.SK_ID_CURR}</div>
+      <div style="font-size: 12px; color: ${decisionMeta[c.decision].color};">${decisionMeta[c.decision].label}</div>
+      <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Risk score ${c.risk_score.toFixed(2)}</div>
+    `;
+    row.onclick = () => { selectedId = c.SK_ID_CURR; renderQueue(); renderDetail(); };
+    queue.appendChild(row);
+  });
+}
+
+function parseProfile(profileStr) {
+  // "Age: 38, Income: $112,500, Requested credit: $152,820, Education: ..., Income type: ..., Occupation: ..."
+  // Split on ", " (comma+space) specifically, not every comma -- a value like
+  // "$112,500" has no space after its comma, only the field separators do.
+  const out = {};
+  profileStr.split(', ').forEach(part => {
+    const [k, ...rest] = part.split(':');
+    if (k && rest.length) out[k.trim()] = rest.join(':').trim();
+  });
+  return out;
+}
+
+function renderDetail() {
+  const c = history.find(x => x.SK_ID_CURR === selectedId);
+  const detail = document.getElementById('detail');
+  if (!c) { detail.innerHTML = ''; return; }
+
+  const status = statusMeta[c.final_status] || statusMeta.human_review_no_llm;
+  const profile = c.profile ? parseProfile(c.profile) : {};
+
+  let html = `
+    <div style="background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <div>
+          <div style="font-size: 15px; font-weight: 500;">${c.customer_name || 'Applicant ' + c.SK_ID_CURR}</div>
+          <div style="font-size: 12px; color: var(--text-muted);">Applicant ${c.SK_ID_CURR}</div>
+        </div>
+        <span style="background: ${status.bg}; color: ${status.text}; font-size: 12px; padding: 3px 10px; border-radius: var(--radius);">${status.label}</span>
+      </div>`;
+
+  if (c.new_customer) {
+    html += `
+      <div style="background: var(--bg-accent); color: var(--text-accent); border-radius: var(--radius); padding: 8px 12px; font-size: 12px; margin-bottom: 12px;">
+        New customer, no credit history on file. This score is based on the application fields alone (income, credit amount, education, etc.) — the 35 bureau/previous-loan/payment-history features an existing customer would have are all at their training-set default, not real signal.
+      </div>`;
+  }
+
+  html += `
+      <table style="width: 100%; font-size: 13px; margin-bottom: 14px; border-collapse: collapse;">`;
+  for (const [k, v] of Object.entries(profile)) {
+    html += `<tr><td style="color: var(--text-secondary); padding: 3px 0;">${k}</td><td style="text-align: right;">${v}</td></tr>`;
+  }
+  html += `<tr><td style="color: var(--text-secondary); padding: 3px 0;">Model risk score</td><td style="text-align: right;">${c.risk_score.toFixed(4)}</td></tr>
+      </table>`;
+
+  if (c.email_draft) {
+    html += `
+      <div style="border-top: 0.5px solid var(--border); padding-top: 12px; margin-bottom: 12px;">
+        <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 6px;">AI-drafted email</p>
+        <pre style="font-family: var(--font-sans); font-size: 13px; white-space: pre-wrap; margin: 0; color: var(--text-primary); line-height: 1.6;">${c.email_draft}</pre>
+      </div>`;
+  }
+
+  if (c.next_best_offer) {
+    html += `
+      <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px;">
+        <i class="ti ti-arrow-right" style="font-size: 16px; color: var(--text-secondary); margin-top: 2px;" aria-hidden="true"></i>
+        <span style="font-size: 13px; color: var(--text-secondary);">Next-best-offer agent: ${c.next_best_offer}</span>
+      </div>`;
+  }
+
+  if (c.bias_score_stage1 !== undefined) {
+    const flagged = c.final_status === 'escalated_to_human';
+    html += `
+      <div style="border-top: 0.5px solid var(--border); padding-top: 12px; display: flex; align-items: flex-start; gap: 8px;">
+        <i class="ti ${flagged ? 'ti-alert-triangle' : 'ti-check'}" style="font-size: 16px; color: ${flagged ? 'var(--text-danger)' : 'var(--text-success)'}; margin-top: 2px;" aria-hidden="true"></i>
+        <span style="font-size: 13px; color: var(--text-secondary);">
+          Bias check: stage 1 = ${c.bias_score_stage1}${c.bias_score_stage2 !== undefined ? ', stage 2 = ' + c.bias_score_stage2 : ''}.
+          ${flagged ? (c.escalation_reason || 'Flagged.') : 'Clean, sent as drafted.'}
+        </span>
+      </div>`;
+  } else if (c.decision === 'human_review') {
+    html += `
+      <div style="border-top: 0.5px solid var(--border); padding-top: 12px; font-size: 13px; color: var(--text-secondary);">
+        Mid-range risk score — routed straight to a human underwriter. No AI drafting happens for this tier by design.
+      </div>`;
+  }
+
+  html += `</div>`;
+  detail.innerHTML = html;
+}
+
+loadQuickPicks();
+renderQueue();
+</script>
+</body>
+</html>
